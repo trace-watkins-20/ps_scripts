@@ -1,0 +1,15 @@
+$all = "Insert List of Hostnames"
+
+$Cred = Get-Credential -UserName 'heartlandbank\' -Message 'Enter Password'
+
+foreach($name in $all)
+
+{
+ping $name
+
+#$device_name = $name.Name -replace ".txt",""
+
+Invoke-Command -ComputerName $name -Credential $Cred -ScriptBlock {Get-Package "*Trend*"}
+ 
+
+}

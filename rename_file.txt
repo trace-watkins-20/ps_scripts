@@ -1,0 +1,33 @@
+#Move Verafin Files From Director to Utility Drive
+#By: Trace Watkins
+#Date: 6/10/2019
+
+
+#check to see if there are files in folder
+if( (Get-ChildItem T:\Applications\IES3210 files | Measure-Object).Count -eq 0)
+{
+ echo "Folder is empty"
+} 
+
+#if files present, move them to the utility drive
+else {
+
+#get names of all files in utility drive
+$all = Get-ChildItem "T:\Applications\IES3210 files" -Recurse
+
+#rename files according to ies version and date
+foreach ($name in $all)
+{
+
+$clipping = $name.Name -replace "Z34","" -replace "\.\d\d\d",""
+
+#get content from first part of document to retrieve date
+[string]$header = gc "T:\Applications\IES3210 files\$name" | select -first 3
+$header -match 'System: (\d\d)\/(\d\d)\/(\d\d\d\d)'
+$new_name = $clipping + "_" + $matches[3] + $matches[1] + $matches[2]
+
+#move file and rename
+Move-Item -path "T:\Applications\Verafin\moved\$name" -destination "T:\Applications\moved\$name"
+}
+
+}
